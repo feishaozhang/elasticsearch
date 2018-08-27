@@ -171,12 +171,8 @@ public class ElasticSearchBase {
 		if(StringUtils.isBlank(id)) {
 			return null;
 		}
-		GetResponse getResponse = null;
 		try {
-			GetRequestBuilder prepareGet = esClient.prepareGet(index, type, id);
-			System.out.println(prepareGet.request().toString());
-			getResponse = esClient.prepareGet(index, type, id).execute().actionGet();
-			String sourceAsString = getResponse.getSourceAsString();
+			String sourceAsString = getDocument(id);
 			if(StringUtils.isNotBlank(sourceAsString)) {
 				Gson g = new Gson();
 				T result = g.fromJson(sourceAsString, t);
@@ -287,14 +283,9 @@ public class ElasticSearchBase {
 		}
 		
 		try {
-			SearchRequestBuilder searchRequestBuilder = esClient.prepareSearch(index).setTypes(type)
-					.setQuery(QueryBuilders.queryStringQuery(query).analyzer(defaultAnalyzer)// 默认分词器
-							.defaultField(field))// 检索字段
-					.setSize(size).setFrom(size * (page - 1)).setSearchType(searchType);
-			SearchResponse response = searchRequestBuilder.execute().actionGet();
 			Gson g = new Gson();
 			List<T> recordList = new ArrayList<>();
-			SearchHits searchByQuery = response.getHits();
+			SearchHits searchByQuery = searchByQuery(query, field, size, page);
 			for (SearchHit searchHit : searchByQuery) {
 				String sourceAsString = searchHit.getSourceAsString();
 				T fromJson = g.fromJson(sourceAsString, t);
