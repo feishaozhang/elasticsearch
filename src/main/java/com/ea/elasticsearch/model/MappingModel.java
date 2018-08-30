@@ -5,8 +5,6 @@ import java.util.Map;
 
 /**
  * 映射字段
- * @author ans-tr
- *
  */
 public class MappingModel {
 	/**

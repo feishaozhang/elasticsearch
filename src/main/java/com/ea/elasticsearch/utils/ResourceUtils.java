@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.elasticsearch.ElasticsearchException;
 
 import com.ea.elasticsearch.ElasticsearchEngine;
 
@@ -13,7 +14,7 @@ import com.ea.elasticsearch.ElasticsearchEngine;
  *
  */
 public class ResourceUtils {
-	private static Logger logger = Logger.getLogger(ElasticsearchEngine.class);
+	private final static Logger logger = Logger.getLogger(ElasticsearchEngine.class);
 	static Properties prop = new Properties();
 	/**
 	 * 配置文件目录
@@ -21,11 +22,21 @@ public class ResourceUtils {
 	private static final String ELASTIC_SEARCH_PROPERTIES_PATH = "/elastic.properties";
 	
 	static {
+		InputStream is = null;
 		try {
-			InputStream fi = ElasticsearchEngine.class.getClass().getResourceAsStream(ELASTIC_SEARCH_PROPERTIES_PATH);
-			prop.load(fi);
+			is = ElasticsearchEngine.class.getClass().getResourceAsStream(ELASTIC_SEARCH_PROPERTIES_PATH);
+			prop.load(is);
 		} catch (Exception e) {
 			logger.error("获取Elastic search 配置文件失败"+e.getMessage());
+			throw new ElasticsearchException("加载配置文件出错");
+		}finally {
+			try {
+				if(is != null) {
+					is.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 	

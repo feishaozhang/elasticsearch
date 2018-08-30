@@ -7,10 +7,6 @@ public class EsExecuteException extends RuntimeException{
 	
 	private static final long serialVersionUID = 1L;
 
-	public EsExecuteException() {
-		super();
-	}
-	
 	public EsExecuteException(String throwable) {
 		super(throwable);
 	}

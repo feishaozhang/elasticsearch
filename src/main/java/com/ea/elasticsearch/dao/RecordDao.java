@@ -11,4 +11,6 @@ public class RecordDao extends ElasticSearchBase{
 	public RecordDao() {
 		super("customertest", "doc");
 	}
+	
+	
 }
